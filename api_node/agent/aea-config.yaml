@@ -35,6 +35,13 @@ default_connection: null
 public_id: fetchai/http_server:0.22.0
 type: connection
 config:
-  host: ${HOST:str:localhost}
-  port: ${PORT:int:5000}
-  target_skill_id: ${TARGET_SKILL:str:fetchai/http_echo:0.20.0}
+  host: localhost
+  port: 5000
+  target_skill_id: default_author/http_echo:0.1.0
+---
+public_id: fetchai/ledger:0.19.0
+type: connection
+config:
+  ledger_apis:
+    ethereum:
+      address: https://amsterdam.skalenodes.com/v1/attractive-muscida

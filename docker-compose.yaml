@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  agent_1:
+    build: api_node/
+    ports:
+      - "8000:5000"
+    environment:
+      FLASK_ENV: ${AEA_1_PRIVATE_KEY}
+
+  agent_2:
+    build: api_node/
+    ports:
+      - "8001:5000"
+    environment:
+      FLASK_ENV: ${AEA_2_PRIVATE_KEY}
+
+  agent_3:
+    build: api_node/
+    ports:
+      - "8002:5000"
+    environment:
+      FLASK_ENV: ${AEA_3_PRIVATE_KEY}
+
+
