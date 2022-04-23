@@ -7,7 +7,7 @@
  */
 
  require('dotenv').config();
- const { ethers } = require('ethers');
+ const { ethers, BigNumber} = require('ethers');
 
  let skaleProvider;
  let decentrapiProvider;
