@@ -23,14 +23,14 @@ app.post('/', async (req, res) => {
 
         // forward the request to node
         let rpcUrl = respAddr[0] + ":" + respAddr[1]
-        // rpcUrl = TEST_URL
+        // let rpcUrl = TEST_URL
 
         respNode = await helper.forwardRequest(rpcUrl, req)
     } catch (e) {
         console.log("something went wrong:", e)
     }
-
-    res.send(respNode)
+    // console.log("respNode content:", respNode.content)
+    res.send(respNode.content)
 });
 
 app.listen(PORT, HOST);
