@@ -47,6 +47,12 @@ class BalanceBehaviour(OneShotBehaviour):
     def setup(self) -> None:
         """Implement the setup for the behaviour."""
         strategy = cast(Strategy, self.context.strategy)
+        address=cast(str, self.context.agent_addresses.get(strategy.ledger_id))
+        self.context.logger.info(f"I am in control of {address}")
+        self.request_balance(address)
+
+    def request_balance(self, address):
+        strategy = cast(Strategy, self.context.strategy)
         ledger_api_dialogues = cast(
             LedgerApiDialogues, self.context.ledger_api_dialogues
         )
@@ -54,7 +60,7 @@ class BalanceBehaviour(OneShotBehaviour):
             counterparty=LEDGER_API_ADDRESS,
             performative=LedgerApiMessage.Performative.GET_BALANCE,
             ledger_id=strategy.ledger_id,
-            address=cast(str, self.context.agent_addresses.get(strategy.ledger_id)),
+            address=address,
         )
         self.context.outbox.put_message(message=ledger_api_msg)
 
