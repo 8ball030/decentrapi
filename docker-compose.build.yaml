@@ -1,0 +1,9 @@
+version: "3"
+services:
+  noderank:
+    build:
+      context: ./
+      dockerfile: build/package/noderank/Dockerfile
+    image: $DOCKER_REGISTRY/noderank:$VERSION-$COMMIT_HASH
+    ports:
+      - 80:80
