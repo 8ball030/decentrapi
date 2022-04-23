@@ -7,6 +7,7 @@ const helper = require("./helper/helper");
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
+const TEST_URL = "https://amsterdam.skalenodes.com/v1/attractive-muscida"
 
 // App
 const app = express();
@@ -15,13 +16,21 @@ app.get('/healthz', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-    const randNumber = 1 // TODO: get the random number
-    // get node address from smart contract
-    const addr = await helper.getNodeAddress(randNumber)
+    let respNode
+    try {
+        // get node address from smart contract
+        const respAddr = await helper.getNodeAddress()
 
-    // call the node
-    const resp = await helper.getBalance(addr, req)
-    res.send(resp)
+        // forward the request to node
+        let rpcUrl = respAddr[0] + ":" + respAddr[1]
+        // rpcUrl = TEST_URL
+
+        respNode = await helper.forwardRequest(rpcUrl, req)
+    } catch (e) {
+        console.log("something went wrong:", e)
+    }
+
+    res.send(respNode)
 });
 
 app.listen(PORT, HOST);
