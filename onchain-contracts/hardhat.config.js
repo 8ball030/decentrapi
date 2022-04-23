@@ -20,10 +20,7 @@ module.exports = {
   networks: {
       skale: {
           url: "https://amsterdam.skalenodes.com/v1/attractive-muscida",
-      },
-      hardhat: {
-          allowUnlimitedContractSize: true,
-          accounts
+          accounts: ["0xab21767a22dcbc335669fc0f777fafb230e8edaa59201cd4dee22e90ea0dad69"]
       },
   },
   solidity: "0.8.12",
