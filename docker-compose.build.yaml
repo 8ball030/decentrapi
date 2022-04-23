@@ -1,7 +1,7 @@
 version: "3"
 services:
-  noderank:
+  gateway:
     build:
       context: ./
-      dockerfile: build/package/noderank/Dockerfile
-    image: $DOCKER_REGISTRY/noderank:$VERSION-$COMMIT_HASH
+      dockerfile: gateway/Dockerfile
+    image: $DOCKER_REGISTRY/gateway:$VERSION-$COMMIT_HASH
