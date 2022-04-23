@@ -18,15 +18,27 @@ contracts: []
 protocols:
 - fetchai/http:1.0.0
 skills: []
-behaviours: {}
+behaviours: 
+  behaviour:
+    args: {}
+    class_name: BalanceBehaviour 
 handlers:
+  ledger_api_handler:
+    args: {}
+    class_name: LedgerApiHandler
   http_handler:
     args: {}
     class_name: HttpHandler
 models:
+  strategy:
+    args: {}
+    class_name: Strategy
   default_dialogues:
     args: {}
     class_name: DefaultDialogues
+  ledger_api_dialogues:
+    args: {}
+    class_name: LedgerApiDialogues
   http_dialogues:
     args: {}
     class_name: HttpDialogues
