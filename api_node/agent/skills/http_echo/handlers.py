@@ -21,7 +21,7 @@
 """This module contains the handler for the 'http_echo' skill."""
 
 import json
-from typing import cast
+from typing import cast, Optional
 
 from aea.protocols.base import Message
 from aea.skills.base import Handler
@@ -32,7 +32,10 @@ from packages.default_author.skills.http_echo.dialogues import (
     DefaultDialogues,
     HttpDialogue,
     HttpDialogues,
+    LedgerApiDialogue,
+    LedgerApiDialogues,
 )
+from packages.fetchai.protocols.ledger_api.message import LedgerApiMessage
 
 
 class HttpHandler(Handler):
@@ -157,3 +160,91 @@ class HttpHandler(Handler):
 
     def teardown(self) -> None:
         """Implement the handler teardown."""
+
+
+class LedgerApiHandler(Handler):
+    """Implement the ledger api handler."""
+
+    SUPPORTED_PROTOCOL = LedgerApiMessage.protocol_id  # type: Optional[PublicId]
+
+    def setup(self) -> None:
+        """Implement the setup for the handler."""
+
+    def handle(self, message: Message) -> None:
+        """
+        Implement the reaction to a message.
+        :param message: the message
+        """
+        ledger_api_msg = cast(LedgerApiMessage, message)
+
+        # recover dialogue
+        ledger_api_dialogues = cast(
+            LedgerApiDialogues, self.context.ledger_api_dialogues
+        )
+        ledger_api_dialogue = cast(
+            Optional[LedgerApiDialogue], ledger_api_dialogues.update(ledger_api_msg)
+        )
+        if ledger_api_dialogue is None:
+            self._handle_unidentified_dialogue(ledger_api_msg)
+            return
+
+        # handle message
+        if ledger_api_msg.performative is LedgerApiMessage.Performative.BALANCE:
+            self._handle_balance(ledger_api_msg)
+        elif ledger_api_msg.performative == LedgerApiMessage.Performative.ERROR:
+            self._handle_error(ledger_api_msg, ledger_api_dialogue)
+        else:
+            self._handle_invalid(ledger_api_msg, ledger_api_dialogue)
+
+    def teardown(self) -> None:
+        """Implement the handler teardown."""
+
+    def _handle_unidentified_dialogue(self, ledger_api_msg: LedgerApiMessage) -> None:
+        """
+        Handle an unidentified dialogue.
+        :param ledger_api_msg: the ledger api message
+        """
+        self.context.logger.info(
+            "received invalid ledger_api message={}, unidentified dialogue.".format(
+                ledger_api_msg
+            )
+        )
+
+    def _handle_balance(self, ledger_api_msg: LedgerApiMessage) -> None:
+        """
+        Handle a message of balance performative.
+        :param ledger_api_msg: the ledger api message
+        """
+        self.context.logger.info(
+            "starting balance on {} ledger={}.".format(
+                ledger_api_msg.ledger_id, ledger_api_msg.balance,
+            )
+        )
+
+    def _handle_error(
+        self, ledger_api_msg: LedgerApiMessage, ledger_api_dialogue: LedgerApiDialogue
+    ) -> None:
+        """
+        Handle a message of error performative.
+        :param ledger_api_msg: the ledger api message
+        :param ledger_api_dialogue: the ledger api dialogue
+        """
+        self.context.logger.info(
+            "received ledger_api error message={} in dialogue={}.".format(
+                ledger_api_msg, ledger_api_dialogue
+            )
+        )
+
+    def _handle_invalid(
+        self, ledger_api_msg: LedgerApiMessage, ledger_api_dialogue: LedgerApiDialogue
+    ) -> None:
+        """
+        Handle a message of invalid performative.
+        :param ledger_api_msg: the ledger api message
+        :param ledger_api_dialogue: the ledger api dialogue
+        """
+        self.context.logger.warning(
+            "cannot handle ledger_api message of performative={} in dialogue={}.".format(
+                ledger_api_msg.performative, ledger_api_dialogue,
+            )
+        )
