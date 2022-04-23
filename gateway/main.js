@@ -29,8 +29,8 @@ app.post('/', async (req, res) => {
     } catch (e) {
         console.log("something went wrong:", e)
     }
-    // console.log("respNode content:", respNode.content)
-    res.send(respNode.content)
+    // console.log("respNode:", respNode.data)
+    res.send(respNode.data)
 });
 
 app.listen(PORT, HOST);
