@@ -1,0 +1,40 @@
+name: ledger
+author: fetchai
+version: 0.19.0
+type: connection
+description: A connection to interact with any ledger API and contract API.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  README.md: QmVgyK1CoqvZ3veizsasgiBxA8Se2RzrkYn4XQgQ1twKTH
+  __init__.py: QmVdEbfzEyGcS59ypmWaMNHGv9N3CDV7s2tdwnH7Xhmq4q
+  base.py: QmaLsdMYZK7bn2pSZDXHDu5JdNzJo4Ngz9WTky4k2rEcR6
+  connection.py: QmfM9uwVkt7LUkFvQnfcDYZnuvhtteno1cBrzCb3dCuT9d
+  contract_dispatcher.py: QmSpukSibGFfhnReBGmun6e1M2Edcb3U2jRV88XcmYeUXf
+  ledger_dispatcher.py: QmVvHjAumryPNgE5vLnGtXt7FUx2pp8FdtkN3b74YqsXMJ
+fingerprint_ignore_patterns: []
+connections: []
+protocols:
+- fetchai/contract_api:1.0.0
+- fetchai/ledger_api:1.0.0
+class_name: LedgerConnection
+config:
+  ledger_apis:
+    ethereum:
+      address: http://127.0.0.1:8545
+      default_gas_price_strategy: gas_station
+      gas_price_strategies:
+        gas_station:
+          gas_price_api_key: null
+          gas_price_strategy: fast
+        eip1559: {}
+    fetchai:
+      address: https://rest-capricorn.fetch.ai:443
+      denom: atestfet
+      chain_id: capricorn-1
+excluded_protocols: []
+restricted_to_protocols:
+- fetchai/contract_api:1.0.0
+- fetchai/ledger_api:1.0.0
+dependencies: {}
+is_abstract: false
