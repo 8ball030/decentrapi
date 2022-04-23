@@ -1,6 +1,11 @@
+apiVersion: skaffold/v1beta15
+kind: Config
 build:
   tagPolicy:
-    gitCommit: {}
+    envTemplate:
+      template: "latest"
   artifacts:
-  - image: gcr.io/k8s-skaffold/example
-  context: ./
+  - image: 8baller/api-node
+    context: ./api_node
+#   - image: 8baller/gateway
+#     context: ./gateway

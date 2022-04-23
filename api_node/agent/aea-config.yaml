@@ -35,7 +35,7 @@ default_connection: null
 public_id: fetchai/http_server:0.22.0
 type: connection
 config:
-  host: localhost
+  host: 0.0.0.0
   port: 5000
   target_skill_id: default_author/http_echo:0.1.0
 ---
