@@ -19,19 +19,11 @@ RUN pip install --upgrade pip
 RUN pip install --upgrade --force-reinstall open-aea[all]==1.6.0
 
 # directories and aea cli config
-COPY /.aea /home/.aea
 WORKDIR /home/agents
-COPY ./packages /home/agents/packages
 RUN pip install --upgrade setuptools
 # aea build script
 COPY /build.sh /build.sh
 RUN ["chmod", "+x", "/build.sh"]
-RUN [ "/build.sh" ]
-
-# optionally, specify any ports to expose here
-# EXPOSE 9000
-
-# aea entrypoint script
-COPY /entrypoint.sh /entrypoint.sh
-RUN ["chmod", "+x", "/entrypoint.sh"]
-CMD [ "/entrypoint.sh" ]
+COPY . .
+RUN bash /build.sh
+ENTRYPOINT [ "/home/agents/agent/run.sh" ]

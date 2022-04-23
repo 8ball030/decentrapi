@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  web:
+    build: api_node/
+    ports:
+      - "8000:5000"
+    environment:
+      FLASK_ENV: ${AEA_1_PRIVATE_KEY}
+
