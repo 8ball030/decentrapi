@@ -1,5 +1,5 @@
 #! /bin/bash
 
-cd /home/agents/agent
+cd agent
 echo "Installing aea dependencies"
 aea -s install

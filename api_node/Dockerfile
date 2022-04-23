@@ -1,29 +1,33 @@
-FROM python:3.7-alpine
+ARG AEA_VERSION=latest
+FROM valory/open-aea-user:${AEA_VERSION}
 
-USER root
+WORKDIR /home/ubuntu
+ENV PATH=$PATH:/home/ubuntu/.local/bin
 
-RUN apk add --no-cache make git bash
+RUN sudo apt-get update --fix-missing
+RUN sudo apt-get autoremove
+RUN sudo apt-get autoclean
+RUN sudo apt-get install python3.8 python3.8-dev git -y
+RUN cd /usr/bin && sudo rm python3 && sudo ln -s python3.8 python3 && sudo ln -s python3.8 python
+# used in Docker-compose to wait until Hardhat node is up
+RUN sudo apt-get install net-tools subversion -y
+RUN python -m pip install --upgrade pip cowsay
 
-# cryptography: https://cryptography.io/en/latest/installation/#alpine
-RUN apk add --no-cache gcc musl-dev python3-dev libffi-dev openssl-dev
+RUN sudo apt-get install -y wget
+RUN wget -O ./go-ipfs.tar.gz https://dist.ipfs.io/go-ipfs/v0.6.0/go-ipfs_v0.6.0_linux-amd64.tar.gz
+RUN tar xvfz go-ipfs.tar.gz
+RUN sudo mv go-ipfs/ipfs /usr/local/bin/ipfs
+RUN ipfs init
 
-# https://stackoverflow.com/a/57485724
-RUN apk add --update --no-cache py3-numpy py3-scipy py3-pillow
-ENV PYTHONPATH "$PYTHONPATH:/usr/lib/python3.7/site-packages"
+WORKDIR /home/ubuntu
 
-# golang
-RUN apk add --no-cache go
+COPY Pipfile .
 
-# aea installation
-RUN pip install --upgrade pip
-RUN pip install --upgrade --force-reinstall open-aea[all]==1.6.0
+RUN python -m pip install --force-reinstall pipenv virtualenv --user
+RUN pipenv --python 3.8
+RUN pipenv install --system --skip-lock
 
-# directories and aea cli config
-WORKDIR /home/agents
-RUN pip install --upgrade setuptools
-# aea build script
-COPY /build.sh /build.sh
-RUN ["chmod", "+x", "/build.sh"]
-COPY . .
-RUN bash /build.sh
-ENTRYPOINT [ "/home/agents/agent/run.sh" ]
+COPY . /home/ubuntu
+RUN  bash build.sh
+CMD ["run.sh"]
+

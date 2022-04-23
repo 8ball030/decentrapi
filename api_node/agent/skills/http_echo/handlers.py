@@ -158,6 +158,7 @@ class HttpHandler(Handler):
     def _handle_get_balance(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue, payload: Any
     ):
+        breakpoint()
         self.context.behaviours.behaviour.request_balance(payload["params"][0])
 
 
