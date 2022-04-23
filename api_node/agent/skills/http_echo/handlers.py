@@ -21,7 +21,7 @@
 """This module contains the handler for the 'http_echo' skill."""
 
 import json
-from typing import cast, Optional
+from typing import cast, Optional, Any
 
 from aea.protocols.base import Message
 from aea.skills.base import Handler
@@ -36,6 +36,7 @@ from packages.default_author.skills.http_echo.dialogues import (
     LedgerApiDialogues,
 )
 from packages.fetchai.protocols.ledger_api.message import LedgerApiMessage
+from packages.default_author.skills.http_echo.behaviours import BalanceBehaviour
 
 
 class HttpHandler(Handler):
@@ -86,6 +87,22 @@ class HttpHandler(Handler):
         )
         self.context.outbox.put_message(message=default_msg)
 
+    def _handle_get_chain_id(
+        self, http_msg: HttpMessage, http_dialogue: HttpDialogue
+    ):
+        http_response = http_dialogue.reply(
+            performative=HttpMessage.Performative.RESPONSE,
+            target_message=http_msg,
+            version=http_msg.version,
+            status_code=200,
+            status_text="Success",
+            headers=http_msg.headers,
+            body=json.dumps({'id': 1, 'jsonrpc': '2.0', 'result': '0xafcee83030b95'}).encode("utf-8"),
+        )
+        self.context.logger.info("responding with: {}".format(http_response))
+        self.context.outbox.put_message(message=http_response)
+
+
     def _handle_request(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
@@ -131,6 +148,20 @@ class HttpHandler(Handler):
         :param http_msg: the http message
         :param http_dialogue: the http dialogue
         """
+        payload = json.loads(http_msg.body)
+        method = payload["method"]
+        if method == "eth_chainId":
+            self._handle_get_chain_id(http_msg, http_dialogue)
+        elif method == "eth_getBalance":
+            self._handle_get_balance(http_msg, http_dialogue, payload)
+
+    def _handle_get_balance(
+        self, http_msg: HttpMessage, http_dialogue: HttpDialogue, payload: Any
+    ):
+        self.context.behaviours.behaviour.request_balance(payload["params"][0])
+
+
+
         http_response = http_dialogue.reply(
             performative=HttpMessage.Performative.RESPONSE,
             target_message=http_msg,
@@ -138,10 +169,24 @@ class HttpHandler(Handler):
             status_code=200,
             status_text="Success",
             headers=http_msg.headers,
-            body=http_msg.body,
+            body=json.dumps({'id': 1, 'jsonrpc': '2.0', 'result': '0xafcee83030b95'}).encode("utf-8"),
         )
         self.context.logger.info("responding with: {}".format(http_response))
         self.context.outbox.put_message(message=http_response)
+
+#
+#
+#        http_response = http_dialogue.reply(
+#            performative=HttpMessage.Performative.RESPONSE,
+#            target_message=http_msg,
+#            version=http_msg.version,
+#            status_code=200,
+#            status_text="Success",
+#            headers=http_msg.headers,
+#            body=http_msg.body,
+#        )
+#        self.context.logger.info("responding with: {}".format(http_response))
+#        self.context.outbox.put_message(message=http_response)
 
     def _handle_invalid(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue

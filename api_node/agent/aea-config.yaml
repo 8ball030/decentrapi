@@ -37,7 +37,7 @@ type: connection
 config:
   host: localhost
   port: 5000
-  target_skill_id: default_author/http_echo
+  target_skill_id: default_author/http_echo:0.1.0
 ---
 public_id: fetchai/ledger:0.19.0
 type: connection
