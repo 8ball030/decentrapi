@@ -5,20 +5,27 @@ services:
     ports:
       - "8000:5000"
     environment:
-      FLASK_ENV: ${AEA_1_PRIVATE_KEY}
+      AEA_KEY: ${AEA_1_PRIVATE_KEY}
 
   agent_2:
     build: api_node/
     ports:
       - "8001:5000"
     environment:
-      FLASK_ENV: ${AEA_2_PRIVATE_KEY}
+      AEA_KEY: ${AEA_2_PRIVATE_KEY}
 
   agent_3:
     build: api_node/
     ports:
       - "8002:5000"
     environment:
-      FLASK_ENV: ${AEA_3_PRIVATE_KEY}
+      AEA_KEY: ${AEA_3_PRIVATE_KEY}
+
+  agent_4:
+    build: api_node/
+    ports:
+      - "8003:5000"
+    environment:
+      AEA_KEY: ${AEA_3_PRIVATE_KEY}
 
 
