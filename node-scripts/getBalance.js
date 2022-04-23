@@ -9,32 +9,73 @@
  require('dotenv').config();
  const { ethers } = require('ethers');
 
- let provider;
+ let skaleProvider;
+ let decentrapiProvider;
 
 
- const getBalance = async () => {
-    console.log("Now testing decentapi...");
+//  const getBalance = async () => {
 
-    let account = process.env.PUBLIC_ADDRESS;
-    let balance = await provider.getBalance(account);
 
-    console.log(`Balance from ${account}: `, balance);
+//     let account = process.env.PUBLIC_ADDRESS;
+//     let balance = await skaleProvider.getBalance(account);
+
+//     console.log("balance: ", balance);
+
+//     console.log(`Balance from ${account}: `, balance);
+// }
+
+const getBalanceFromSkaleNetwork = async () => {
+    try{
+        let tmp = await skaleProvider.getNetwork();
+        console.log("Connected to skale.com");
+        console.log("skaleProvider: ", tmp);
+        console.log("ID: ", tmp.chainId);
+
+        let account = process.env.PUBLIC_ADDRESS;
+        let balance = await skaleProvider.getBalance(account);
+
+        console.log(`Balance from ${account}: `, BigNumber.from(balance));
+
+        return balance;
+    }
+    catch(error){
+        console.log("Something is wrong: ", error.code);
+        process.exit(1);
+    }
 }
 
+const getBalanceFromDecentrapiNetwork = async () => {
+    try{
+        console.log("Now testing decentapi...");
 
-function initialise(){
-    provider = new ethers.providers.JsonRpcProvider(process.env.SKALE_RPC_URL);
+        let tmp = await decentrapiProvider.getNetwork();
+        console.log("decentrapiProvider: ", tmp);
 
-    if(provider){
-        console.log("Connected to skale.com");
-        console.log("Provider: ", provider);
+        let account = process.env.PUBLIC_ADDRESS;
+        let balance = await decentrapiProvider.getBalance(account);
 
-        getBalance();
-    }else{
-        console.log("Could not connect. Exiting.")
+        console.log(`Balance from ${account}: `, BigNumber.from(balance));
+
+        return balance;
+    }
+    catch(error){
+        console.log("Something is wrong: ", error.code);
         process.exit(1);
     }
 }
 
 
-initialise();
+const getBalances = async () => {
+    skaleProvider = new ethers.providers.JsonRpcProvider(process.env.SKALE_RPC_URL);
+    decentrapiProvider = new ethers.providers.JsonRpcProvider(process.env.DECENTRAPI_RPC_URL);
+
+    let amountFromScale = await getBalanceFromSkaleNetwork();
+    let amountFromDecentrapi = await getBalanceFromDecentrapiNetwork();
+
+    console.log("amountFromScale: ", amountFromScale);
+    console.log("amountFromDecentrapi: ", amountFromDecentrapi)
+
+    //TODO: Compare the results
+}
+
+getBalances();
