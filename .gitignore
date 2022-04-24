@@ -7,3 +7,4 @@ node_modules
 # misc
 .env
 ethereum_private_key.txt
+.idea/

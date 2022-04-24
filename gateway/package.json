@@ -1,0 +1,15 @@
+{
+  "name": "gateway",
+  "version": "1.0.0",
+  "description": "Node.js on Docker",
+  "author": "Ray<rayspock675@gmail.com>",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "axios": "^0.26.1",
+    "express": "^4.16.1",
+    "web3": "^1.7.3"
+  }
+}
