@@ -30,5 +30,6 @@ services:
 
   gateway:
     build: gateway/
+    restart: always
     ports:
-      - "8080:31001"
+      - "80:31001"
