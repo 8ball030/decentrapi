@@ -5,7 +5,7 @@ const helper = require("./helper/helper");
 
 
 // Constants
-const PORT = 8080;
+const PORT = 31001;
 const HOST = '0.0.0.0';
 const TEST_URL = "https://amsterdam.skalenodes.com/v1/attractive-muscida"
 

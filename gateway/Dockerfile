@@ -15,6 +15,6 @@ RUN npm install
 # Bundle app source
 COPY build/package/gateway/. .
 
-EXPOSE 8080
+EXPOSE 31001
 CMD [ "node", "main.js" ]
 
