@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 
 //ETHAmsterdam 2022 Hackathon
-//Last update: 23.04.2022
+//Last update: 24.04.2022
 
 pragma solidity ^0.8.0;
 
@@ -18,35 +18,36 @@ contract decentrapi is Ownable {
         uint port;
         string url;
     }
-    //(bytes32) hashedUrl => NODE
+    //(bytes32) hashed(nodeUrl,nodePort) => (struct) NODE
     mapping (bytes32 => Node) nodes;
 
     bytes32[] private nodeIndex;
 
     //Events
     event NodeAdded(address indexed sender, string nodeUrl, uint nodePort, uint nodeId);
-    event NodeRemoved(address indexed sender);
+    //event NodeRemoved(address indexed sender);
 
 /*
     constructor(string memory _serviceName, string memory _serviceVersion){
         serviceName = _serviceName;
         serviceVersion = _serviceVersion;
 
+        //TODO:
         //apiNodeHash
         //loadBalancerHash
     }
 */
 
     function addNode(string memory _url, uint _port) public onlyOwner returns(bool success){
-        require(keccak256(abi.encodePacked(_url)) != keccak256(abi.encodePacked("")), "addNode: URL must be provided");
-        require(_port != 0);
+        require(keccak256(abi.encodePacked(_url)) != keccak256(abi.encodePacked("")), "addNode: Url must be provided");
+        require(_port != 0, "addNode: Port must be provided");
 
-        bytes32 hashedUrl = keccak256(abi.encodePacked(_url, address(this)));
+        bytes32 hashedUrl = keccak256(abi.encodePacked(_url, _port, address(this)));
         uint index = nodeIndex.length;
 
-        nodes[hashedUrl].index = index;
-        nodes[hashedUrl].port = _port;
-        nodes[hashedUrl].url = _url;
+        nodes[hashedUrl].index  = index;
+        nodes[hashedUrl].port   = _port;
+        nodes[hashedUrl].url    = _url;
 
         nodeIndex.push(hashedUrl);
 
@@ -75,10 +76,8 @@ contract decentrapi is Ownable {
 
     function getNodeUrlHash(uint nodeId) public view returns(bytes32 hash){
         require(nodeId < nodeIndex.length, "getNodeUrlHash: nodeId does not exist");
-        bytes32 hashedUrl = nodeIndex[nodeId];
-        require(nodes[hashedUrl].index == nodeId, "getNodeUrlHash: nodeId does not exist");
 
-        return hashedUrl;
+        return nodeIndex[nodeId];
     }
 
     function getNodeId(bytes32 nodeUrlHash) public view returns(uint nodeId){
@@ -90,5 +89,20 @@ contract decentrapi is Ownable {
 
     function getNodeAmount() public view returns(uint amount){
         return nodeIndex.length;
+    }
+
+    function isNode(string memory _url, uint _port) public view returns(bool){
+        require(nodeIndex.length > 0, "isNode: There are no nodes");
+        require(keccak256(abi.encodePacked(_url)) != keccak256(abi.encodePacked("")), "isNode: Url must be provided");
+        require(_port != 0, "isNode: Port must be provided");
+
+        bytes32 hashedUrl = keccak256(abi.encodePacked(_url, _port, address(this)));
+        uint index = nodes[hashedUrl].index;
+
+        if (nodeIndex[index] == hashedUrl) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
