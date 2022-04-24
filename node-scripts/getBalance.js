@@ -13,17 +13,6 @@
  let decentrapiProvider;
 
 
-//  const getBalance = async () => {
-
-
-//     let account = process.env.PUBLIC_ADDRESS;
-//     let balance = await skaleProvider.getBalance(account);
-
-//     console.log("balance: ", balance);
-
-//     console.log(`Balance from ${account}: `, balance);
-// }
-
 const getBalanceFromSkaleNetwork = async () => {
     try{
         let tmp = await skaleProvider.getNetwork();
