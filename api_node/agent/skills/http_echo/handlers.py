@@ -43,6 +43,7 @@ class HttpHandler(Handler):
     """This implements the echo handler."""
 
     SUPPORTED_PROTOCOL = HttpMessage.protocol_id
+    ENCODING = "utf-8"
 
     def setup(self) -> None:
         """Implement the setup."""
@@ -97,7 +98,7 @@ class HttpHandler(Handler):
             status_code=200,
             status_text="Success",
             headers=http_msg.headers,
-            body=json.dumps({'id': 1, 'jsonrpc': '2.0', 'result': '0xafcee83030b95'}).encode("utf-8"),
+            body=json.dumps({'id': 1, 'jsonrpc': '2.0', 'result': '0xafcee83030b95'}).encode(self.EN),
         )
         self.context.logger.info("responding with: {}".format(http_response))
         self.context.outbox.put_message(message=http_response)
@@ -129,16 +130,16 @@ class HttpHandler(Handler):
         :param http_msg: the http message
         :param http_dialogue: the http dialogue
         """
-        http_response = http_dialogue.reply(
+        http_response,  = http_dialogue.reply(
             performative=HttpMessage.Performative.RESPONSE,
             target_message=http_msg,
             version=http_msg.version,
             status_code=200,
             status_text="Success",
             headers=http_msg.headers,
-            body=json.dumps({"tom": {"type": "cat", "age": 10}}).encode("utf-8"),
+            body=json.dumps({"tom": {"type": "cat", "age": 10}}).encode(self.ENCODING),
         )
-        self.context.logger.info("responding with: {}".format(http_response))
+        self.context.logger.info(f"responding with: {http_response}")
         self.context.outbox.put_message(message=http_response)
 
     def _handle_post(self, http_msg: HttpMessage, http_dialogue: HttpDialogue) -> None:
@@ -158,9 +159,7 @@ class HttpHandler(Handler):
     def _handle_get_balance(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue, payload: Any
     ):
-        self.context.behaviours.behaviour.request_balance(payload["params"][0])
-
-
+        balance = await self.context.behaviours.behaviour.request_balance(payload["params"][0])
 
         http_response = http_dialogue.reply(
             performative=HttpMessage.Performative.RESPONSE,
@@ -169,24 +168,10 @@ class HttpHandler(Handler):
             status_code=200,
             status_text="Success",
             headers=http_msg.headers,
-            body=json.dumps({'id': 1, 'jsonrpc': '2.0', 'result': '0xafcee83030b95'}).encode("utf-8"),
+            body=json.dumps({'id': 1, 'jsonrpc': '2.0', 'result': balance}).encode("utf-8"),
         )
         self.context.logger.info("responding with: {}".format(http_response))
         self.context.outbox.put_message(message=http_response)
-
-#
-#
-#        http_response = http_dialogue.reply(
-#            performative=HttpMessage.Performative.RESPONSE,
-#            target_message=http_msg,
-#            version=http_msg.version,
-#            status_code=200,
-#            status_text="Success",
-#            headers=http_msg.headers,
-#            body=http_msg.body,
-#        )
-#        self.context.logger.info("responding with: {}".format(http_response))
-#        self.context.outbox.put_message(message=http_response)
 
     def _handle_invalid(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
