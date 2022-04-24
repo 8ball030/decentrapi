@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 
-//ETHAmsterdam 2022 Hackathon
+//ETHAmsterdam 2022 Hackathon by ETHGlobal
 //Last update: 24.04.2022
 
 pragma solidity ^0.8.0;
@@ -103,6 +103,19 @@ contract decentrapi is Ownable {
             return true;
         } else {
             return false;
+        }
+    }
+
+    //SKALE RNG Endpoint
+    //https://docs.skale.network/skaled/3.14.x/random-number-generator
+    function getRandom() public view returns (bytes32 addr) {
+        assembly {
+            let freemem := mload(0x40)
+            let start_addr := add(freemem, 0)
+            if iszero(staticcall(gas(), 0x18, 0, 0, start_addr, 32)) {
+              invalid()
+            }
+            addr := mload(freemem)
         }
     }
 }
