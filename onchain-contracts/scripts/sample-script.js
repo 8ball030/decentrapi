@@ -14,9 +14,12 @@ async function main() {
     // manually to make sure everything is compiled
     // await hre.run('compile');
 
+    var serviceName = "decentrapi";
+    var serviceVersion = "0.2.0";
+
     // We get the contract to deploy
     const Decentrapi = await hre.ethers.getContractFactory("decentrapi");
-    const decentrapi = await Decentrapi.deploy();
+    const decentrapi = await Decentrapi.deploy(serviceName, serviceVersion);
 
     await decentrapi.deployed();
 
