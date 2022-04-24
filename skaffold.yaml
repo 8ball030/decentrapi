@@ -5,7 +5,7 @@ build:
     envTemplate:
       template: "latest"
   artifacts:
-  - image: 8baller/api-node
+  - image: 8ball030/api-node
     context: ./api_node
-#   - image: 8baller/gateway
-#     context: ./gateway
+#  - image: 8ball030/gateway
+#    context: ./gateway
