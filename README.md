@@ -1,5 +1,27 @@
 # To run the node scripts to demonstrate the denctralised api.
 
+Clone the repository, and recursively clone the submodules:
+
+
+# Setup 
+`git clone --recursive https://github.com/8ball030/decentrapi.git`
+
+`git submodule update --init --recursive`
+
+
+# API node
+
+```bash
+pipenv --python 3.8
+pipenv run pip install -e .
+pipenv shell
+```
+
+# Multisigwallet-cli
+
+```
+cd third_party/multisigwallet-cli && yarn install && cd ../../
+```
 
 # Node scripts
 
@@ -13,7 +35,6 @@ export SKALE_RPC_URL=https://amsterdam.skalenodes.com/v1/attractive-muscida
 export DECENTRAPI_RPC_URL=https://decentrapi.eth.link
 
 export PUBLIC_ADDRESS=0x314e0dB1f7cD3657f3155697e3B7351Db632950e
-
 
 node getBalance.js
 ```
