@@ -28,4 +28,7 @@ services:
     environment:
       AEA_KEY: ${AEA_3_PRIVATE_KEY}
 
-
+  gateway:
+    build: gateway/
+    ports:
+      - "8080:31001"
